@@ -1,83 +1,42 @@
-import pandas as pd
-import os
-import pickle
-
-from preprocess import clean_text
-from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
+import pandas as pd
+import pickle, os
 
-# -----------------------------
-# 📁 PATH SETUP
-# -----------------------------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-data_path = os.path.join(BASE_DIR, "..", "data")
-model_path = os.path.join(BASE_DIR, "..", "models")
-
-os.makedirs(model_path, exist_ok=True)
-
-# -----------------------------
-# 📥 LOAD DATA
-# -----------------------------
-fake = pd.read_csv(os.path.join(data_path, "Fake.csv"))
-true = pd.read_csv(os.path.join(data_path, "True.csv"))
+# load data
+fake = pd.read_csv("data/Fake.csv")
+true = pd.read_csv("data/True.csv")
 
 fake["label"] = 0
 true["label"] = 1
 
-df = pd.concat([fake, true], ignore_index=True)
+df = pd.concat([fake, true]).sample(frac=1, random_state=42)
 
-# -----------------------------
-# 🔍 CHECK COLUMN
-# -----------------------------
-if "title" not in df.columns:
-    raise Exception("Column 'title' not found in dataset")
-
-# -----------------------------
-# 🔥 USE ONLY TITLE (IMPORTANT)
-# -----------------------------
-df["title"] = df["title"].apply(clean_text)
-
-X = df["title"]
+X = df["title"] + " " + df["text"]
 y = df["label"]
 
-# -----------------------------
-# 🔀 TRAIN-TEST SPLIT
-# -----------------------------
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+# better vectorizer
+vectorizer = TfidfVectorizer(
+    max_features=10000,
+    ngram_range=(1,2),
+    stop_words="english"
 )
 
-# -----------------------------
-# 📊 TF-IDF VECTORIZATION
-# -----------------------------
-vectorizer = TfidfVectorizer(max_features=5000)
-X_train_vec = vectorizer.fit_transform(X_train)
-X_test_vec = vectorizer.transform(X_test)
+X_vec = vectorizer.fit_transform(X)
 
-# -----------------------------
-# 🤖 MODEL TRAINING (BALANCED)
-# -----------------------------
-model = LogisticRegression(max_iter=1000, class_weight='balanced')
-model.fit(X_train_vec, y_train)
+X_train, X_test, y_train, y_test = train_test_split(
+    X_vec, y, test_size=0.2, random_state=42
+)
 
-# -----------------------------
-# 📈 EVALUATION
-# -----------------------------
-y_pred = model.predict(X_test_vec)
+# better model
+model = LogisticRegression(max_iter=2000)
 
-accuracy = accuracy_score(y_test, y_pred)
-print(f"\n✅ Accuracy: {accuracy:.4f}\n")
+model.fit(X_train, y_train)
 
-print("📊 Classification Report:")
-print(classification_report(y_test, y_pred))
+print("Accuracy:", model.score(X_test, y_test))
 
-# -----------------------------
-# 💾 SAVE MODEL
-# -----------------------------
-pickle.dump(model, open(os.path.join(model_path, "model.pkl"), "wb"))
-pickle.dump(vectorizer, open(os.path.join(model_path, "vectorizer.pkl"), "wb"))
-
-print("\n🚀 Model trained and saved successfully!")
+# save
+os.makedirs("models", exist_ok=True)
+pickle.dump(model, open("models/model.pkl", "wb"))
+pickle.dump(vectorizer, open("models/vectorizer.pkl", "wb"))

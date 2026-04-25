@@ -1,18 +1,18 @@
 import feedparser
 
 def get_news(category="general"):
-    feeds = {
-        "general": "http://feeds.bbci.co.uk/news/rss.xml",
-        "business": "http://feeds.bbci.co.uk/news/business/rss.xml",
-        "technology": "http://feeds.bbci.co.uk/news/technology/rss.xml",
-        "sports": "http://feeds.bbci.co.uk/sport/rss.xml"
-    }
-
-    url = feeds.get(category, feeds["general"])
-    feed = feedparser.parse(url)
+    feeds = [
+        "http://feeds.bbci.co.uk/news/rss.xml",
+        "https://rss.cnn.com/rss/edition.rss",
+        "https://feeds.skynews.com/feeds/rss/home.xml"
+    ]
 
     news_list = []
-    for entry in feed.entries[:10]:
-        news_list.append((entry.title, entry.link))
+
+    for url in feeds:
+        feed = feedparser.parse(url)
+
+        for entry in feed.entries[:5]:
+            news_list.append((entry.title, entry.link))
 
     return news_list

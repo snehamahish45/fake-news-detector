@@ -1,6 +1,6 @@
-pandas
-numpy
-scikit-learn
 streamlit
+pandas
+feedparser
+scikit-learn
+google-generativeai
 requests
-nltk
