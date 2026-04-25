@@ -4,3 +4,4 @@ feedparser
 scikit-learn
 google-generativeai
 requests
+python-dotenv
