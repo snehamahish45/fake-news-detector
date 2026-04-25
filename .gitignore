@@ -4,6 +4,7 @@
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 
 # ----------------------
 # Virtual environments
@@ -13,27 +14,9 @@ env/
 .venv/
 
 # ----------------------
-# Data files (big)
-# ----------------------
-data/
-*.csv
-*.xlsx
-
-# ----------------------
-# ML models (VERY IMPORTANT)
-# ----------------------
-models/
-*.pkl
-
-# ----------------------
 # Logs
 # ----------------------
 *.log
-
-# ----------------------
-# Streamlit
-# ----------------------
-.streamlit/
 
 # ----------------------
 # OS files
@@ -42,12 +25,25 @@ models/
 Thumbs.db
 
 # ----------------------
-# IDE files
+# IDE / Editor files
 # ----------------------
 .vscode/
 .idea/
 
 # ----------------------
-# Secrets / API keys
+# Streamlit config
+# ----------------------
+.streamlit/
+
+# ----------------------
+# Environment variables / secrets
 # ----------------------
 .env
+
+# ----------------------
+# Data files (large datasets)
+# ----------------------
+data/
+*.csv
+*.xlsx
+
