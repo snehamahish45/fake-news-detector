@@ -62,7 +62,7 @@ fake-news-detector/
 ### 1. Clone repo
 
 ```
-git clone https://github.com/snehamahish45/fake-news-detector-pro.git
+git clone https://github.com/snehamahish45/fake-news-detector.git
 cd fake-news-detector-pro
 ```
 
