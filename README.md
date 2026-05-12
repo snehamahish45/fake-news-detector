@@ -1,4 +1,4 @@
-# 🧠 Fake News Detection System (Pro)
+# 🧠 Fake News Detection System 
 
 AI-powered fake news detection system with real-time news verification, smart NLP model, and modern Streamlit UI.
 
