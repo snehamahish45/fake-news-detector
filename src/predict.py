@@ -26,19 +26,23 @@ def predict_news(news, url=None):
     # -----------------------------
     # 1️⃣ GEMINI AI (PRIMARY)
     # -----------------------------
-    result = gemini_verify(news)
+    try:
+        result = gemini_verify(news)
 
-    if result:
-        label, prob, explain = result
+        if result:
+            label, prob, explain = result
 
-        if label == "Real":
-            return "Real", prob, explain
+            if label == "Real":
+                return "Real", prob, explain
 
-        elif label == "Fake":
-            return "Fake", prob, explain
+            elif label == "Fake":
+                return "Fake", prob, explain
 
-        else:
-            return "Possible Real", 0.6, "AI uncertain — may be real"
+            else:
+                return "Possible Real", 0.6, "AI uncertain — may be real"
+
+    except Exception:
+        print("Gemini API unavailable. Using ML model...")
 
     # -----------------------------
     # 2️⃣ TRUSTED SOURCE CHECK

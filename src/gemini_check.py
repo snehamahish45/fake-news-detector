@@ -2,79 +2,26 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-# ==============================
-# LOAD ENV VARIABLES
-# ==============================
 load_dotenv()
 
-API_KEY = os.getenv("AIzaSyAuD_a8TwlKtJ0wdkJJ_KNszowU1jCWRrU")
+api_key = os.getenv("GEMINI_API_KEY")
 
-if not API_KEY:
-    raise ValueError("❌ GEMINI_API_KEY not found. Add it in .env file or Render environment.")
+if not api_key:
+    raise ValueError("❌ GEMINI_API_KEY not found.")
 
-# ==============================
-# CONFIGURE GEMINI
-# ==============================
-genai.configure(api_key=API_KEY)
+genai.configure(api_key=api_key)
 
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
-# ==============================
-# GEMINI FACT CHECK FUNCTION
-# ==============================
-def gemini_verify(news):
+def gemini_verify(text):
     prompt = f"""
-You are a fact-checking assistant.
+    Check whether this news is real or fake.
+    Give a short explanation.
 
-Analyze the following news headline and determine if it is:
-- REAL
-- FAKE
-- UNCERTAIN
+    News:
+    {text}
+    """
 
-Also provide a short reasoning.
+    response = model.generate_content(prompt)
 
-Respond STRICTLY in this format:
-Label: <Real/Fake/Uncertain>
-Reason: <short explanation>
-
-Headline: {news}
-"""
-
-    try:
-        response = model.generate_content(prompt)
-        text = response.text.strip()
-
-        # DEBUG (optional)
-        print("Gemini response:", text)
-
-        # ==============================
-        # PARSE RESPONSE SAFELY
-        # ==============================
-        label = "Uncertain"
-        reason = text
-
-        if "Label:" in text:
-            try:
-                label_part = text.split("Label:")[1].split("\n")[0].strip()
-                reason_part = text.split("Reason:")[1].strip()
-
-                label = label_part.capitalize()
-                reason = reason_part
-            except:
-                pass
-
-        # ==============================
-        # CONFIDENCE LOGIC
-        # ==============================
-        if label == "Real":
-            prob = 0.85
-        elif label == "Fake":
-            prob = 0.85
-        else:
-            prob = 0.5
-
-        return label, prob, f"Gemini: {reason}"
-
-    except Exception as e:
-        print("Gemini error:", e)
-        return None
+    return response.text
