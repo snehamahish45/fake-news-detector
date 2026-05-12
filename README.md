@@ -63,7 +63,7 @@ fake-news-detector/
 
 ```
 git clone https://github.com/snehamahish45/fake-news-detector.git
-cd fake-news-detector-pro
+cd fake-news-detector
 ```
 
 ### 2. Install dependencies
